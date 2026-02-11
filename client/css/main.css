@@ -231,3 +231,9 @@ label {
   .grid-3 { grid-template-columns: 1fr; }
   nav ul { gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 }
+.chart-wrap {
+  position: relative;
+  height: 260px;        /* ustaw docelową wysokość */
+  max-height: 260px;
+  width: 100%;
+}

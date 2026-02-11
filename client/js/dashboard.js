@@ -1,4 +1,4 @@
-// Dashboard API version (MongoDB + JWT)
+// SmartBudget Dashboard (API + Filters + CRUD + Chart.js + NBP rates)
 
 const tbody = document.getElementById("txTbody");
 const hint = document.getElementById("listHint");
@@ -22,10 +22,13 @@ const filterTo = document.getElementById("filterTo");
 let transactions = [];
 
 function showErr(msg) {
+  if (!txError) return;
   txError.textContent = msg;
   txError.style.display = "block";
 }
+
 function hideErr() {
+  if (!txError) return;
   txError.textContent = "";
   txError.style.display = "none";
 }
@@ -48,6 +51,15 @@ function computeKpis(list) {
   kpiBalance.textContent = formatMoney(income - expense);
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function renderList(list) {
   tbody.innerHTML = "";
 
@@ -55,6 +67,8 @@ function renderList(list) {
     hint.textContent = "Brak transakcji. Dodaj pierwszą transakcję powyżej.";
     hint.style.display = "block";
     computeKpis([]);
+    // wykres też aktualizujemy (pusty)
+    if (typeof renderCategoryChart === "function") renderCategoryChart([]);
     return;
   }
 
@@ -82,24 +96,21 @@ function renderList(list) {
   }
 
   computeKpis(list);
-}
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  // wykres na podstawie aktualnych danych
+  if (typeof renderCategoryChart === "function") renderCategoryChart(list);
 }
 
 function buildQuery() {
   const params = new URLSearchParams();
 
-  if (filterType.value) params.set("type", filterType.value);
-  if (filterCategory.value.trim()) params.set("category", filterCategory.value.trim());
-  if (filterFrom.value) params.set("from", filterFrom.value);
-  if (filterTo.value) params.set("to", filterTo.value);
+  if (filterType?.value) params.set("type", filterType.value);
+
+  const cat = (filterCategory?.value || "").trim();
+  if (cat) params.set("category", cat);
+
+  if (filterFrom?.value) params.set("from", filterFrom.value);
+  if (filterTo?.value) params.set("to", filterTo.value);
 
   const qs = params.toString();
   return qs ? `?${qs}` : "";
@@ -111,11 +122,11 @@ async function loadTransactions() {
   try {
     const qs = buildQuery();
     const data = await apiRequest(`/api/transactions${qs}`, { auth: true });
-    transactions = data;
+    transactions = Array.isArray(data) ? data : [];
     renderList(transactions);
   } catch (e) {
-    // najczęściej brak tokena / wygasł
     showErr(e.message || "Nie udało się pobrać transakcji.");
+    // jeżeli token jest zły/nie ma tokena -> cofamy do logowania
     if ((e.message || "").toLowerCase().includes("token")) {
       clearToken();
       window.location.href = "./login.html";
@@ -145,6 +156,11 @@ async function addTransactionFromForm() {
     });
 
     txForm.reset();
+
+    // ustaw datę z powrotem na dziś (wygodne UX)
+    const dateEl = document.getElementById("date");
+    if (dateEl) dateEl.valueAsDate = new Date();
+
     await loadTransactions();
   } catch (e) {
     showErr(e.message || "Nie udało się dodać transakcji.");
@@ -161,14 +177,13 @@ async function deleteTransaction(id) {
   }
 }
 
-// Prosta edycja: prompty (na zaliczenie OK)
-// Potem możemy przerobić na modal/form w UI.
+// Prosta edycja przez prompt (na zaliczenie OK, szybko i działa)
 async function editTransaction(id) {
   const tx = transactions.find(t => t._id === id);
   if (!tx) return;
 
   const newType = prompt("Typ (income/expense):", tx.type);
-  if (!newType) return;
+  if (newType === null) return;
 
   const newAmount = prompt("Kwota:", String(tx.amount));
   if (newAmount === null) return;
@@ -196,11 +211,24 @@ async function editTransaction(id) {
   if (!payload.date) return showErr("Data jest wymagana.");
 
   try {
-    await apiRequest(`/api/transactions/${id}`, { method: "PUT", auth: true, body: payload });
+    await apiRequest(`/api/transactions/${id}`, {
+      method: "PUT",
+      auth: true,
+      body: payload
+    });
     await loadTransactions();
   } catch (e) {
     showErr(e.message || "Nie udało się edytować transakcji.");
   }
+}
+
+// Debounce do filtra kategorii (żeby nie odpalać fetch na każde naciśnięcie)
+function debounce(fn, ms) {
+  let t = null;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), ms);
+  };
 }
 
 // EVENTS
@@ -233,21 +261,13 @@ resetFiltersBtn.addEventListener("click", async () => {
   await loadTransactions();
 });
 
-// Automatyczne filtrowanie po zmianie (wymóg: interakcje)
+// Automatyczne filtrowanie
 filterType.addEventListener("change", loadTransactions);
 filterCategory.addEventListener("input", debounce(loadTransactions, 350));
 filterFrom.addEventListener("change", loadTransactions);
 filterTo.addEventListener("change", loadTransactions);
 
-function debounce(fn, ms) {
-  let t = null;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-// START: jeśli nie ma tokena → do logowania
+// START
 (function init() {
   const token = localStorage.getItem("sb_token");
   if (!token) {
@@ -255,9 +275,13 @@ function debounce(fn, ms) {
     return;
   }
 
-  // domyślna data w formularzu na dziś
+  // ustaw domyślną datę w formularzu
   const dateEl = document.getElementById("date");
   if (dateEl && !dateEl.value) dateEl.valueAsDate = new Date();
 
+  // pobierz transakcje + wykres
   loadTransactions();
+
+  // pobierz kursy NBP (zewnętrzne API)
+  if (typeof loadRatesNBP === "function") loadRatesNBP();
 })();

@@ -141,14 +141,51 @@
   </section>
 </main>
 
+<section class="grid-2" style="margin-top: 16px;">
+  <article class="card fade-in">
+    <h2>Wydatki wg kategorii</h2>
+    <p class="help">Wykres aktualizuje się po dodaniu/usunięciu transakcji.</p>
+    <div class="chart-wrap">
+  <canvas id="categoryChart"></canvas>
+</div>
+
+  </article>
+
+  <aside class="card fade-in">
+    <h2>Kursy walut (NBP)</h2>
+    <p class="help">Dane pobierane asynchronicznie z zewnętrznego API.</p>
+
+    <div class="grid-3" style="margin-top: 10px;">
+      <div class="kpi">
+        <div class="label">EUR</div>
+        <div class="value" id="rateEur">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">USD</div>
+        <div class="value" id="rateUsd">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">GBP</div>
+        <div class="value" id="rateGbp">—</div>
+      </div>
+    </div>
+
+    <div class="help" style="margin-top: 10px;" id="rateInfo">—</div>
+  </aside>
+</section>
+
 <footer class="footer">
   <div class="container">
     <small>© SmartBudget</small>
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script src="./js/api.js"></script>
 <script src="./js/ui.js"></script>
+<script src="./js/charts.js"></script>
 <script src="./js/dashboard.js"></script>
+
 </body>
 </html>
