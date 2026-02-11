@@ -34,6 +34,8 @@ const corsOptions = {
       return callback(null, true);
     }
 
+    if (origin.endsWith(".vercel.app")) return callback(null, true);
+
 
     return callback(null, false);
   },
