@@ -11,7 +11,7 @@ const app = express();
 
 /**
  * CORS:
- * - lokalnie: Live Server
+ * - lokalnie: Live Server / inne porty
  * - produkcyjnie: Vercel
  */
 const allowedOrigins = [
@@ -19,29 +19,36 @@ const allowedOrigins = [
   "http://127.0.0.1:5500",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://smartbudget-delta.vercel.app" // <- podmień po deployu frontendu
+  "https://smartbudget-delta.vercel.app"
 ];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Render/monitoring czasem nie wysyła Origin — pozwalamy
-      if (!origin) return callback(null, true);
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-
-      return callback(new Error("CORS blocked for origin: " + origin));
+    if (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) {
+      return callback(null, true);
     }
-  })
-);
 
-app.options("*", cors());
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+
+    return callback(null, false);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
-/**
- * Root route — żeby Render nie pokazywał "Cannot GET /"
- */
+
 app.get("/", (req, res) => {
   res.send("SmartBudget API działa. Sprawdź /api/health");
 });
@@ -54,7 +61,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionsRoutes);
 
 async function start() {
-  // Na Render zmienne są w Environment Variables, a nie w pliku .env
   if (!process.env.MONGODB_URI) throw new Error("Brak MONGODB_URI (Render Env Vars / .env lokalnie)");
   if (!process.env.JWT_SECRET) throw new Error("Brak JWT_SECRET (Render Env Vars / .env lokalnie)");
 
