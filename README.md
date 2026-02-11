@@ -89,3 +89,7 @@ Otwórz folder projektu w VS Code.
 Uruchom rozszerzenie Live Server na pliku:
 
 client/index.html
+
+Demo (Vercel): https://smartbudget-delta.vercel.app
+
+API (Render): https://smartbudget-vlgj.onrender.com
