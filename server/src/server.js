@@ -19,7 +19,7 @@ const allowedOrigins = [
   "http://127.0.0.1:5500",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://TWOJ_FRONTEND.vercel.app" // <- podmień po deployu frontendu
+  "https://smartbudget-delta.vercel.app" // <- podmień po deployu frontendu
 ];
 
 app.use(
@@ -34,6 +34,8 @@ app.use(
     }
   })
 );
+
+app.options("*", cors());
 
 app.use(express.json());
 
