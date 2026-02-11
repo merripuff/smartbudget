@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rejestracja — SmartBudget</title>
+  <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+<header>
+  <div class="container header-row">
+    <div class="brand">
+      <div class="brand-badge">SB</div>
+      <span>SmartBudget</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a class="nav-link" href="./index.html">Home</a></li>
+        <li><a class="nav-link" href="./login.html">Logowanie</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card fade-in" style="max-width: 520px; margin: 0 auto;">
+    <h1>Rejestracja</h1>
+    <p>Załóż konto, aby zacząć dodawać transakcje.</p>
+
+    <form id="registerForm">
+      <label for="email">Email</label>
+      <input class="input" id="email" name="email" type="email" required />
+
+      <label for="password">Hasło</label>
+      <input class="input" id="password" name="password" type="password" placeholder="min. 8 znaków" required />
+
+      <label for="password2">Powtórz hasło</label>
+      <input class="input" id="password2" name="password2" type="password" required />
+
+      <div class="error" id="registerError" style="display:none;"></div>
+
+      <div style="display:flex; gap:10px; margin-top: 12px;">
+        <button class="btn primary" type="submit">Utwórz konto</button>
+        <a class="btn" href="./login.html">Mam konto</a>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <small>© SmartBudget</small>
+  </div>
+</footer>
+
+<script src="./js/api.js"></script>
+<script src="./js/auth.js"></script>
+</body>
+</html>

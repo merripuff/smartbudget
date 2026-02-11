@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logowanie — SmartBudget</title>
+  <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+<header>
+  <div class="container header-row">
+    <div class="brand">
+      <div class="brand-badge">SB</div>
+      <span>SmartBudget</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a class="nav-link" href="./index.html">Home</a></li>
+        <li><a class="nav-link" href="./register.html">Rejestracja</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card fade-in" style="max-width: 520px; margin: 0 auto;">
+    <h1>Logowanie</h1>
+    <p>Zaloguj się, aby przejść do dashboardu.</p>
+
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input class="input" id="email" name="email" type="email" placeholder="np. jan@wp.pl" required />
+
+      <label for="password">Hasło</label>
+      <input class="input" id="password" name="password" type="password" placeholder="min. 8 znaków" required />
+
+      <div class="error" id="loginError" style="display:none;"></div>
+
+      <div style="display:flex; gap:10px; margin-top: 12px;">
+        <button class="btn primary" type="submit">Zaloguj</button>
+        <a class="btn" href="./register.html">Nie mam konta</a>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <small>© SmartBudget</small>
+  </div>
+</footer>
+
+<script src="./js/api.js"></script>
+<script src="./js/auth.js"></script>
+</body>
+</html>

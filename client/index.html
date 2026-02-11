@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartBudget</title>
+  <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+<header>
+  <div class="container header-row">
+    <div class="brand">
+      <div class="brand-badge">SB</div>
+      <span>SmartBudget</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a class="nav-link" href="./index.html">Home</a></li>
+        <li><a class="nav-link" href="./login.html">Logowanie</a></li>
+        <li><a class="nav-link" href="./register.html">Rejestracja</a></li>
+        <li><a class="nav-link" href="./dashboard.html">Dashboard</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="grid-2">
+    <article class="card fade-in">
+      <h1>Kontroluj wydatki. Planuj cele. Zobacz wykresy.</h1>
+      <p>
+        SmartBudget to prosty menedżer finansów: dodawaj przychody i wydatki,
+        filtruj po kategoriach i dacie oraz analizuj podsumowania.
+      </p>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;">
+        <a class="btn primary" href="./register.html">Załóż konto</a>
+        <a class="btn" href="./login.html">Zaloguj się</a>
+      </div>
+
+      <p class="help" style="margin-top: 12px;">
+        *W kolejnych krokach dodamy logowanie, bazę danych i API.
+      </p>
+    </article>
+
+    <aside class="card fade-in">
+      <h2>Funkcje</h2>
+      <ul style="margin:0; padding-left: 18px; color: var(--muted);">
+        <li>Rejestracja i logowanie (JWT)</li>
+        <li>CRUD transakcji</li>
+        <li>Filtry i wyszukiwanie</li>
+        <li>Podsumowanie i wykresy</li>
+        <li>Integracja z API kursów walut (później)</li>
+      </ul>
+    </aside>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <small>© SmartBudget — projekt na zaliczenie</small>
+  </div>
+</footer>
+</body>
+</html>

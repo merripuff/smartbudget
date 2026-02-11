@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — SmartBudget</title>
+  <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+<header>
+  <div class="container header-row">
+    <div class="brand">
+      <div class="brand-badge">SB</div>
+      <span>SmartBudget</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a class="nav-link" href="./index.html">Home</a></li>
+        <li><button class="btn" id="logoutBtn" type="button">Wyloguj</button></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="grid-3" aria-label="Podsumowanie">
+    <article class="kpi card fade-in">
+      <div class="label">Przychody</div>
+      <div class="value" id="kpiIncome">0.00</div>
+    </article>
+
+    <article class="kpi card fade-in">
+      <div class="label">Wydatki</div>
+      <div class="value" id="kpiExpense">0.00</div>
+    </article>
+
+    <article class="kpi card fade-in">
+      <div class="label">Saldo</div>
+      <div class="value" id="kpiBalance">0.00</div>
+    </article>
+  </section>
+
+  <section class="grid-2" style="margin-top: 16px;">
+    <article class="card fade-in">
+      <h2>Dodaj transakcję</h2>
+
+      <form id="txForm">
+        <div class="form-row">
+          <div>
+            <label for="type">Typ</label>
+            <select id="type" class="input" required>
+              <option value="income">Przychód</option>
+              <option value="expense">Wydatek</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="amount">Kwota</label>
+            <input id="amount" class="input" type="number" min="0.01" step="0.01" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="category">Kategoria</label>
+            <input id="category" class="input" type="text" placeholder="np. Jedzenie" required />
+          </div>
+
+          <div>
+            <label for="date">Data</label>
+            <input id="date" class="input" type="date" required />
+          </div>
+        </div>
+
+        <label for="note">Notatka (opcjonalnie)</label>
+        <input id="note" class="input" type="text" placeholder="np. obiad" />
+
+        <div class="error" id="txError" style="display:none;"></div>
+
+        <div style="display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap;">
+          <button class="btn primary" type="submit">Dodaj</button>
+          <button class="btn" id="resetFiltersBtn" type="button">Reset filtrów</button>
+        </div>
+      </form>
+    </article>
+
+    <aside class="card fade-in">
+      <h2>Filtry</h2>
+
+      <div class="form-row">
+        <div>
+          <label for="filterType">Typ</label>
+          <select id="filterType" class="input">
+            <option value="">Wszystkie</option>
+            <option value="income">Przychody</option>
+            <option value="expense">Wydatki</option>
+          </select>
+        </div>
+        <div>
+          <label for="filterCategory">Kategoria</label>
+          <input id="filterCategory" class="input" type="text" placeholder="np. Transport" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="filterFrom">Od</label>
+          <input id="filterFrom" class="input" type="date" />
+        </div>
+        <div>
+          <label for="filterTo">Do</label>
+          <input id="filterTo" class="input" type="date" />
+        </div>
+      </div>
+
+      <p class="help">Po podłączeniu backendu filtry będą pobierać dane z API.</p>
+    </aside>
+  </section>
+
+  <section class="card fade-in" style="margin-top: 16px;">
+    <h2>Transakcje</h2>
+    <div class="help" id="listHint">Brak danych — zaloguj się i dodaj pierwszą transakcję.</div>
+
+    <div style="overflow:auto; margin-top: 10px;">
+      <table class="table" aria-label="Lista transakcji">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Typ</th>
+            <th>Kategoria</th>
+            <th>Kwota</th>
+            <th>Notatka</th>
+            <th>Akcje</th>
+          </tr>
+        </thead>
+        <tbody id="txTbody">
+          <!-- JS wygeneruje wiersze -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <small>© SmartBudget</small>
+  </div>
+</footer>
+
+<script src="./js/api.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/dashboard.js"></script>
+</body>
+</html>
