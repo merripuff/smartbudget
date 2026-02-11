@@ -1,4 +1,7 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://smartbudget-vlgj.onrender.com";
 
 function getToken() {
   return localStorage.getItem("sb_token");
